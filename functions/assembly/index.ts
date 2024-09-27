@@ -4,13 +4,24 @@ import {
   SystemMessage,
   UserMessage,
 } from "@hypermode/models-as/models/openai/chat";
+import * as duckdb from "duckdb";
+const db = new duckdb.Database(
+  ":memory:",
+  {
+    access_mode: "READ_WRITE",
+    max_memory: "512MB",
+    threads: "4",
+  },
+  (err) => {
+    if (err) {
+      console.error(err.toString());
+    }
+  },
+);
+
 const modelName = "text-generator";
 
-// import * as duckdb from '@duckdb/duckdb-wasm';
-
-// const JSDELIVR_BUNDLES = duckdb.getJsDelivrBundles();
-
-export function generateQuery(text: string): string {
+export async function generateQuery(text: string): string {
   const model = models.getModel<OpenAIChatModel>(modelName);
 
   const input = model.createInput([
@@ -25,5 +36,9 @@ export function generateQuery(text: string): string {
 
   const output = model.invoke(input);
 
-  return output.choices[0].message.content.trim();
+  // Wait for the DB query to complete using async/await
+  const dbResult = await db.all(output.choices[0].message.content.trim());
+
+  // Combine the output and the db result into a string
+  return `Generated Query: ${output.choices[0].message.content.trim()}, DB Result: ${dbResult}`;
 }
