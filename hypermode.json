@@ -6,7 +6,7 @@
     // which is hosted on Hypermode and used in the starter function in this repository.
     // You can update or remove this model as needed.
     "text-generator": {
-      "sourceModel": "meta-llama/Meta-Llama-3.1-8B-Instruct",
+      "sourceModel": "meta-llama/CodeLlama-7b-hf",
       "provider": "hugging-face",
       "host": "hypermode"
     }
