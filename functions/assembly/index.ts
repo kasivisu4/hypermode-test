@@ -4,20 +4,7 @@ import {
   SystemMessage,
   UserMessage,
 } from "@hypermode/models-as/models/openai/chat";
-import * as duckdb from "duckdb";
-const db = new duckdb.Database(
-  ":memory:",
-  {
-    access_mode: "READ_WRITE",
-    max_memory: "512MB",
-    threads: "4",
-  },
-  (err) => {
-    if (err) {
-      console.error(err.toString());
-    }
-  },
-);
+import { Database } from "duckdb-async";
 
 const modelName = "text-generator";
 
@@ -35,6 +22,8 @@ export async function generateQuery(text: string): string {
   input.maxTokens = 200;
 
   const output = model.invoke(input);
+
+  const db = await Database.create(":memory:");
 
   // Wait for the DB query to complete using async/await
   const dbResult = await db.all(output.choices[0].message.content.trim());
