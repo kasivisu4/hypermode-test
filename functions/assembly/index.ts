@@ -6,12 +6,16 @@ import {
 } from "@hypermode/models-as/models/openai/chat";
 const modelName = "text-generator";
 
-export function generateText(text: string): string {
+// import * as duckdb from '@duckdb/duckdb-wasm';
+
+// const JSDELIVR_BUNDLES = duckdb.getJsDelivrBundles();
+
+export function generateQuery(text: string): string {
   const model = models.getModel<OpenAIChatModel>(modelName);
 
   const input = model.createInput([
     new SystemMessage(
-      "You are a helpful assistant. Limit your answers to 150 words.",
+      "convert the given text to a sql query that just transforms without data. For instance, what is 2 + 2? should be converted to SELECT 2 + 2;",
     ),
     new UserMessage(text),
   ]);
